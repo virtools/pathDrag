@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+      body {
+        margin: 0;
+        user-select: none;
+      }
+      .dragButton {
+        position: absolute;
+        display: block;
+        width: 20px;
+        height: 20px;
+        /*background-color: #f00;*/
+        border-radius: 20px;
+        /*margin-left: -10px;
+        margin-top: -10px;*/
+        transform: translate(-10px, -10px);
+        background-color: transparent;
+      }
+      .dragButton::before {
+        content: "";
+        position: absolute;
+        display: block;
+        width: 10px;
+        height: 10px;
+        left: 5px;
+        top: 5px;
+        background-color: #f00;
+        border-radius: 20px;
+      }
+      .dragButton::after {
+        content: "";
+        position: absolute;
+        display: block;
+        width: 20px;
+        height: 20px;
+        left: 0px;
+        top: 0px;
+        border: 2px solid #000;
+        box-sizing: border-box;
+        border-radius: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="600" height="600">
+      <!--<path d="M 50 150 C 50 150 250 0 250 150 H 500" style="fill:none;stroke:black;stroke-width:2;" id="svg01" />-->
+      <path
+        d="M 200 100 A 50 50 0 0 1 200 200 L 100 200 A 50 50 0 0 1 100 100"
+        style="fill: none; stroke: #000; stroke-width: 2;"
+        id="path02"
+      />
+      <path
+        d="M 200 100 A 50 50 0 0 1 200 200 L 100 200 A 50 50 0 0 1 100 100"
+        style="fill: none; stroke: #f00; stroke-width: 2;"
+        id="path01"
+      />
+      <!--<path d="M 100 100 A 50 50 0 0 1 100 200 A 50 50 0 0 1 100 100" style="fill:none;stroke:#00f;stroke-width:2;" />-->
+      <!--<path
+        d="M 50 150 50 0 250 0 250 150 500 150"
+        style="fill:none;stroke:black;stroke-width:2;"
+        id="svg02"
+      />-->
+    </svg>
+    <div class="dragButton" id="dragButton01"></div>
+    <div class="dragButton" id="dragButton02"></div>
+    <script>
+      (function () {
+        Number.prototype.toAvoid = function () {
+          return parseFloat(this.toFixed(10));
+        };
+
+        var vector2D = function () {
+          function getArguments(data) {
+            var p = { x: 0, y: 0 };
+            if (typeof data[0] === "number") {
+              p.x = data[0];
+              p.y = typeof data[1] === "number" ? data[1] : data[0];
+            } else if (typeof data[0] === "object") {
+              data[0].x !== undefined && (p.x = data[0].x);
+              data[0].y !== undefined && (p.y = data[0].y);
+            }
+            return p;
+          }
+          var p = getArguments(arguments);
+          this.x = p.x;
+          this.y = p.y;
+          this.length = function () {
+            return Math.sqrt(this.x * this.x + this.y * this.y);
+          };
+          this.dot = function (v) {
+            return this.x * v.x + this.y * v.y;
+          };
+          this.cross = function (v) {
+            return this.x * v.y - this.y * v.x;
+          };
+          this.scale = function () {
+            var p = getArguments(arguments);
+            this.x *= p.x;
+            this.y *= p.y;
+            return this;
+          };
+          this.add = function () {
+            var p = getArguments(arguments);
+            this.x += p.x;
+            this.y += p.y;
+            return this;
+          };
+          this.sub = function (v) {
+            var p = getArguments(arguments);
+            this.x -= p.x;
+            this.y -= p.y;
+            return this;
+          };
+          this.swap = function () {
+            var temp = this.x;
+            this.x = -this.y;
+            this.y = temp;
+            return this;
+          };
+          this.normalize = function () {
+            var r = this.length();
+            this.x /= r;
+            this.y /= r;
+            return this;
+          };
+          this.rotate = function (pAngle) {
+            var cos0 = Math.cos(pAngle);
+            var sin0 = Math.sin(pAngle);
+            var xx = this.x * cos0 - this.y * sin0;
+            var yy = this.y * cos0 + this.x * sin0;
+            this.x = xx;
+            this.y = yy;
+            return this;
+          };
+          this.projection = function (v) {
+            var temp = this.dot(v) / v.length();
+            return new vector2D(v.x * temp, v.y * temp);
+          };
+          this.clone = function () {
+            return new vector2D(this.x, this.y);
+          };
+        };
+
+        Object.defineProperty(Element.prototype, "setPos", {
+          value: function () {
+            function getArguments(data) {
+              var p = { x: 0, y: 0 };
+              if (typeof data[0] === "number") {
+                p.x = data[0];
+                p.y = typeof data[1] === "number" ? data[1] : data[0];
+              } else if (typeof data[0] === "object") {
+                data[0].x !== undefined && (p.x = data[0].x);
+                data[0].y !== undefined && (p.y = data[0].y);
+              }
+              return p;
+            }
+            var p = getArguments(arguments);
+            this.style.left = p.x + "px";
+            this.style.top = p.y + "px";
+          },
+          writable: false,
+          configurable: false,
+          enumerable: false, // 設定為不可列舉的屬性
+        });
+
+        var pathDrag = function (id, el) {
+          var onFun = null;
+          this.constructor = function () {
+            this.id = id;
+            this.el = el;
+            this.progress = 0;
+            this.path = null;
+            this.length = 0;
+          };
+          this.setProgress = function (value) {
+            this.progress = value;
+            if (this.path) {
+              this.el.setPos(this.path.getPointAtLength(this.length * this.progress));
+              if (onFun) {
+                onFun("update", this);
+              }
+            }
+          };
+          this.active = function (bool, fun) {
+            if (bool) {
+              var that = this;
+              var mousedown = false;
+              var local = new vector2D(0, 0);
+              var mouseX = 0;
+              var mouseY = 0;
+              window.addEventListener("mousemove", function (e) {
+                mouseX = e.pageX;
+                mouseY = e.pageY;
+              });
+              that.el.addEventListener("mousedown", function (e) {
+                if (!mousedown) {
+                  mousedown = true;
+                  local.x = mouseX - that.el.offsetLeft;
+                  local.y = mouseY - that.el.offsetTop;
+                  update();
+                }
+              });
+
+              window.addEventListener("mouseup", function (e) {
+                if (mousedown) {
+                  mousedown = false;
+                }
+              });
+              function update() {
+                if (mousedown) {
+                  requestAnimationFrame(update);
+                  var dragButton01Position = new vector2D(that.el.offsetLeft, that.el.offsetTop);
+
+                  var dragPos = new vector2D(mouseX - local.x, mouseY - local.y);
+                  var count = 5;
+                  var rrrrr = Math.min(dragButton01Position.sub(dragPos).length(), 10) / count;
+
+                  var currentLength = that.length * that.progress;
+                  var distance = that.length;
+                  var length = currentLength;
+                  for (var i = 0; i <= count; i++) {
+                    for (var j = 0; j < 2; j++) {
+                      var tempLength = currentLength + (j ? -1 : 1) * rrrrr * i;
+                      var tempDistance = new vector2D(that.path.getPointAtLength(tempLength)).sub(dragPos).length();
+                      if (tempDistance < distance) {
+                        distance = tempDistance;
+                        length = tempLength;
+                      }
+                    }
+                  }
+                  that.setProgress(length / that.length);
+                }
+              }
+            }
+            if (onFun) {
+              onFun("active", this);
+            }
+          };
+          this.connect = function (path) {
+            this.path = path;
+            this.length = this.path.getTotalLength();
+            this.setProgress(this.progress);
+            if (onFun) {
+              onFun("connect", this);
+            }
+          };
+          this.on = function (fun) {
+            onFun = fun;
+            this.setProgress(this.progress);
+          };
+          this.constructor();
+        };
+
+        var path01 = document.getElementById("path01");
+        var path02 = document.getElementById("path02");
+        //console.log([path01]);
+
+        var dragButton01 = document.getElementById("dragButton01");
+        var dragButton02 = document.getElementById("dragButton02");
+        function update(type, data) {
+          var a = pathDrag01;
+          var b = pathDrag02;
+          if (a && b) {
+            if (b.progress > a.progress) {
+              var temp = a;
+              a = b;
+              b = temp;
+            }
+            var d = a.length * a.progress - b.length * b.progress;
+            //console.log(d);
+            path01.setAttribute("stroke-dasharray", 0 + " " + (a.length - d) + " " + d + " " + 0);
+            path01.setAttribute("stroke-dashoffset", -a.progress * a.length);
+            path02.setAttribute("stroke-dasharray", 0 + " " + (d + 10) + " " + Math.max(a.length - d, 0) + " " + 10);
+            path02.setAttribute("stroke-dashoffset", -b.progress * b.length);
+          }
+        }
+        var pathDrag01 = new pathDrag("pathDrag01", dragButton01);
+        pathDrag01.on(update);
+        pathDrag01.active(true);
+        pathDrag01.connect(path01);
+        pathDrag01.setProgress(0.5);
+        var pathDrag02 = new pathDrag("pathDrag02", dragButton02);
+        pathDrag02.on(update);
+        pathDrag02.active(true);
+        pathDrag02.connect(path01);
+        pathDrag02.setProgress(0.2);
+      })();
+    </script>
+  </body>
+</html>
