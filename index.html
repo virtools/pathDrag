@@ -371,6 +371,7 @@
                   local.y = mouseY - that.el.offsetTop;
                   update();
                 }
+                e.preventDefault();
               }
               function move(e) {
                 if (mousedown) {
@@ -378,12 +379,14 @@
                   mouseX = item.pageX;
                   mouseY = item.pageY;
                 }
+                e.preventDefault();
               }
               function end(e) {
                 if (mousedown) {
                   that.el.classList.remove("active");
                   mousedown = false;
                 }
+                e.preventDefault();
               }
               that.el.addEventListener("mousedown", start);
               window.addEventListener("mousemove", move);
