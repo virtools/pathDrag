@@ -20,7 +20,7 @@
         flex-wrap: wrap;
         min-width: 800px;
         /* flex-direction: column; */
-        background-image: linear-gradient(-0deg, rgb(0, 0, 0) 0%, rgb(53, 43, 50) 50%, rgb(85, 59, 107) 100%);
+        background-image: linear-gradient(-0deg, rgb(0, 0, 0) 0%, rgb(22, 15, 18) 50%, rgb(34, 19, 47) 100%);
       }
       .content {
       }
@@ -57,13 +57,13 @@
       .path_bg {
         fill: none;
         stroke: #ccc;
-        stroke-width: 12px;
+        stroke-width: 18px;
         stroke-linecap: round;
         stroke-linejoin: round;
       }
       .path_value {
         fill: none;
-        stroke-width: 8px;
+        stroke-width: 14px;
         stroke-linecap: round;
         stroke-linejoin: round;
       }
@@ -129,10 +129,12 @@
               <feGaussianBlur result="blurOut" in="displacementmap" stdDeviation="4"></feGaussianBlur>
               <feBlend in="SourceGraphic" in2="blurOut" mode="multiply"></feBlend> -->
               <feOffset result="offOut" in="SourceGraphic" dx="0" dy="0"></feOffset>
-              <feGaussianBlur result="blurOut" in="offOut" stdDeviation="8">
+              <feGaussianBlur result="blurOut" in="offOut" stdDeviation="6">
                 <animate attributeName="stdDeviation" values="6;10;6" dur="2s" repeatCount="indefinite" />
               </feGaussianBlur>
-              <feBlend in="SourceGraphic" in2="blurOut" mode="multiply"></feBlend>
+              <!-- <feGaussianBlur result="blurOut1" in="blurOut" stdDeviation="6"></feGaussianBlur> -->
+              <!-- <feBlend in="SourceGraphic" in2="blurOut" mode="multiply" result="multiply"></feBlend> -->
+              <feBlend in="SourceGraphic" in2="blurOut" mode="normal"></feBlend>
             </filter>
             <linearGradient id="stroke" gradientUnits="userSpaceOnUse" x1="80" y1="90" x2="320" y2="90">
               <stop offset="0" style="stop-color: #ff0000;"></stop>
