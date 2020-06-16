@@ -321,24 +321,35 @@
               var local = new vector2D(0, 0);
               var mouseX = 0;
               var mouseY = 0;
-              window.addEventListener("mousemove", function (e) {
-                mouseX = e.pageX;
-                mouseY = e.pageY;
-              });
-              that.el.addEventListener("mousedown", function (e) {
+              function start(e) {
                 if (!mousedown) {
+                  var item = e.touches ? e.touches[0] : e;
+                  mouseX = item.pageX;
+                  mouseY = item.pageY;
                   mousedown = true;
                   local.x = mouseX - that.el.offsetLeft;
                   local.y = mouseY - that.el.offsetTop;
                   update();
                 }
-              });
-
-              window.addEventListener("mouseup", function (e) {
+              }
+              function move(e) {
+                if (mousedown) {
+                  var item = e.touches ? e.touches[0] : e;
+                  mouseX = item.pageX;
+                  mouseY = item.pageY;
+                }
+              }
+              function end(e) {
                 if (mousedown) {
                   mousedown = false;
                 }
-              });
+              }
+              that.el.addEventListener("mousedown", start);
+              window.addEventListener("mousemove", move);
+              window.addEventListener("mouseup", end);
+              that.el.addEventListener("touchstart", start);
+              that.el.addEventListener("touchmove", move);
+              that.el.addEventListener("touchend", end);
               function update() {
                 if (mousedown) {
                   requestAnimationFrame(update);
