@@ -15,7 +15,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 100wh;
+        width: 100vw;
         height: 100vh;
         flex-wrap: wrap;
         min-width: 800px;
@@ -90,13 +90,54 @@
         text-shadow: 0px 0px 4px #000, 0px 0px 4px #000;
         border-radius: 10px;
       }
+      .svg {
+        position: relative;
+      }
+      #pathRange {
+        stroke-width: 10px;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      #pathRange_value {
+        stroke-width: 4px;
+        stroke: #000;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      #dragButtonStart,
+      #dragButtonEnd {
+        width: 20px;
+        height: 20px;
+        border-radius: 20px;
+        line-height: 20px;
+        transition: width 0.5s, height 0.5s, border-radius 0.5s, line-height 0.5s;
+      }
+      #dragButtonStart:hover,
+      #dragButtonEnd:hover,
+      #dragButtonStart.active,
+      #dragButtonEnd.active {
+        width: 30px;
+        height: 30px;
+        border-radius: 30px;
+        line-height: 30px;
+      }
+      #dragButtonStart::after,
+      #dragButtonEnd::after {
+        /*border: 0;*/
+      }
+      #dragButtonStart::after {
+        content: "S";
+      }
+      #dragButtonEnd::after {
+        content: "E";
+      }
     </style>
   </head>
   <body>
     <div class="wrap">
       <div class="box" id="box"></div>
       <div class="content">
-        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="400" height="200">
+        <svg class="svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="700" height="200">
           <defs>
             <filter id="f3" x="-50%" y="-50%" width="200%" height="200%">
               <!-- <feOffset result="offOut" in="SourceGraphic" dx="-6" dy="-6"></feOffset>
@@ -124,7 +165,7 @@
               <feBlend in="SourceGraphic" in2="blurOut" mode="multiply"></feBlend>
               <!-- <feBlend in="SourceGraphic" in2="blurOut" mode="normal"></feBlend> -->
             </filter>
-            <linearGradient id="stroke" gradientUnits="userSpaceOnUse" x1="80" y1="90" x2="320" y2="90">
+            <linearGradient id="stroke" gradientUnits="userSpaceOnUse" x1="100" y1="100" x2="350" y2="100">
               <stop offset="0" style="stop-color: #ff0000;"></stop>
               <stop offset="0.5" style="stop-color: #00ff00;"></stop>
               <stop offset="1" style="stop-color: #0000ff;"></stop>
@@ -133,25 +174,33 @@
           <path
             class="path_bg"
             id="path01"
-            d="m 26.242568,172.09844 0.43686,-141.536563 c 0,0 38.80668,-2.84866 51.11037,4.36845 12.3037,7.21712 18.232,17.00805 19.22102,28.39473 1.07717,12.40216 -3.64037,22.88113 -12.6684,31.4525 -5.5498,5.269103 -24.02625,10.921063 -24.02625,10.921063 0,0 17.8922,14.55557 24.89993,23.58942 9.18888,11.84564 9.56954,30.7052 21.842062,39.31566 3.74299,2.62612 13.54207,2.18416 13.54207,2.18416"
+            d="M 53.74626,172.09844 54.18312,30.561877 c 0,0 38.80668,-2.84866 51.11037,4.36845 12.3037,7.21712 18.232,17.00805 19.22102,28.39473 1.07717,12.40216 -3.64037,22.88113 -12.6684,31.4525 -5.5498,5.269103 -24.02625,10.921063 -24.02625,10.921063 0,0 17.8922,14.55557 24.89993,23.58942 9.18888,11.84564 9.56954,30.7052 21.84206,39.31566 3.74299,2.62612 13.54207,2.18416 13.54207,2.18416"
           />
           <path
             class="path_bg"
             id="path02"
-            d="m 233.30518,51.967147 c 0,0 -3.23385,-14.61376 -16.16311,-20.53155 -13.29386,-6.08463 -31.34112,-3.9044 -43.68407,3.93159 -15.09621,9.58395 -23.55371,28.77562 -27.08417,46.30514 -4.81415,23.903253 -4.94368,52.952413 9.6105,72.515583 8.67506,11.66062 25.21993,17.73427 39.75255,17.91053 13.11557,0.15951 36.69464,-11.35779 36.69464,-11.35779 0,0 -15.02687,-35.08948 2.18421,-47.61584 6.27974,-4.57034 -23.1526,-2.62076 -23.1526,-2.62076"
+            d="m 260.80887,51.967147 c 0,0 -3.23385,-14.61376 -16.16311,-20.53155 -13.29386,-6.08463 -31.34112,-3.9044 -43.68407,3.93159 -15.09621,9.58395 -23.55371,28.77562 -27.08417,46.30514 -4.81415,23.903253 -4.94368,52.952413 9.6105,72.515583 8.67506,11.66062 25.21993,17.73427 39.75255,17.91053 13.11557,0.15951 36.69464,-11.35779 36.69464,-11.35779 0,0 -15.02687,-35.08948 2.18421,-47.61584 6.27974,-4.57034 -23.1526,-2.62076 -23.1526,-2.62076"
           />
           <path
             class="path_bg"
             id="path03"
-            d="M 294.0261,169.91428 V 30.998737 c 12.63683,-1.45049 27.05722,-2.39977 44.12092,0.43673 10.86855,1.80666 19.03237,7.88738 24.46311,17.47367 4.95453,8.74566 3.60154,18.95738 -0.87371,27.95775 -4.6575,9.36689 -20.09466,20.53155 -20.09466,20.53155 0,0 19.28124,7.202873 27.52097,19.221113 7.49921,10.93805 5.48128,28.95293 -4.36842,40.6261 -12.27454,14.54708 -48.05251,14.85266 -48.05251,14.85266"
+            d="M 321.52979,169.91428 V 30.998737 c 12.63683,-1.45049 27.05722,-2.39977 44.12092,0.43673 10.86855,1.80666 19.03237,7.88738 24.46311,17.47367 4.95453,8.74566 3.60154,18.95738 -0.87371,27.95775 -4.6575,9.36689 -20.09466,20.53155 -20.09466,20.53155 0,0 19.28124,7.202873 27.52097,19.221113 7.49921,10.93805 5.48128,28.95293 -4.36842,40.6261 -12.27454,14.54708 -48.05251,14.85266 -48.05251,14.85266"
+          />
+          <path
+            class="path_bg"
+            id="pathRange"
+            d="m 447.50369,100 c 0,0 14.64466,50 50,50 35.35534,0 64.64466,-100 100,-100 35.35534,0 50,50 50,50"
           />
           <path class="path_value" id="path01_value" filter="url(#f3)" stroke="url(#stroke)" />
           <path class="path_value" id="path02_value" filter="url(#f3)" stroke="url(#stroke)" />
           <path class="path_value" id="path03_value" filter="url(#f3)" stroke="url(#stroke)" />
+          <path class="path_value" id="pathRange_value" />
         </svg>
         <div class="dragButton" id="dragButton01"></div>
         <div class="dragButton" id="dragButton02"></div>
         <div class="dragButton" id="dragButton03"></div>
+        <div class="dragButton" id="dragButtonStart"></div>
+        <div class="dragButton" id="dragButtonEnd"></div>
       </div>
     </div>
     <script>
@@ -264,14 +313,16 @@
           enumerable: false, // 設定為不可列舉的屬性
         });
         function getOffset(el) {
-          var pos = [0, 0];
+          /*var pos = [0, 0];
           var m = el;
           while (m) {
             pos[0] += m.offsetLeft || 0;
             pos[1] += m.offsetTop || 0;
             m = m.offsetParent || m.parentElement;
           }
-          return pos;
+          return pos;*/
+          var rect = el.getBoundingClientRect();
+          return [rect.left, rect.top];
         }
 
         var PathDrag = function (id, el, bool, path, progress) {
@@ -293,7 +344,7 @@
             if (this.path) {
               //console.log([this.path.parentElement.parentElement.offsetParent]);
               var pos = this.path.getPointAtLength(this.length * this.progress);
-              var offsetPos = getOffset(this.path);
+              var offsetPos = getOffset(this.path.parentElement);
               pos.x += offsetPos[0];
               pos.y += offsetPos[1];
               this.el.setPos(pos);
@@ -311,6 +362,7 @@
               var mouseY = 0;
               function start(e) {
                 if (!mousedown) {
+                  that.el.classList.add("active");
                   var item = e.touches ? e.touches[0] : e;
                   mouseX = item.pageX;
                   mouseY = item.pageY;
@@ -329,6 +381,7 @@
               }
               function end(e) {
                 if (mousedown) {
+                  that.el.classList.remove("active");
                   mousedown = false;
                 }
               }
@@ -350,7 +403,7 @@
                   var currentLength = that.length * that.progress;
                   var distance = that.length;
                   var length = currentLength;
-                  var offsetPos = getOffset(that.path);
+                  var offsetPos = getOffset(that.path.parentElement);
                   for (var i = 0; i <= count; i++) {
                     for (var j = 0; j < 2; j++) {
                       var tempLength = currentLength + (j ? -1 : 1) * rrrrr * i;
@@ -388,7 +441,7 @@
           };
           this.to = function (path) {
             var d = this.length * this.progress;
-            path.setAttribute("stroke-dasharray", 0 + " " + (this.length - d) + " " + d + " " + 0);
+            path.setAttribute("stroke-dasharray", 0 + " " + (this.length - d + 1) + " " + d + " " + 0);
             path.setAttribute("stroke-dashoffset", -d);
           };
           this.constructor();
@@ -439,10 +492,48 @@
           pathDrag03.to(path03_value);
           changeColor();
         });
+
+        var pathRange = document.getElementById("pathRange");
+        var pathRange_value = document.getElementById("pathRange_value");
+        pathRange_value.setAttribute("d", pathRange.getAttribute("d"));
+
+        var dragButtonStart = document.getElementById("dragButtonStart");
+        var dragButtonEnd = document.getElementById("dragButtonEnd");
+        function update(type, data) {
+          var a = pathDragStart;
+          var b = pathDragEnd;
+          //console.log(a.progress);
+          if (a && b) {
+            if (a.progress > b.progress) {
+              var temp = a;
+              a = b;
+              b = temp;
+            }
+            var d = b.length * b.progress - a.length * a.progress;
+            //console.log(d);
+            pathRange_value.setAttribute("stroke-dasharray", 0 + " " + (b.length - d + 1) + " " + d + " " + 0);
+            pathRange_value.setAttribute("stroke-dashoffset", -b.progress * b.length);
+            // pathRange.setAttribute("stroke-dasharray", 0 + " " + (d + 10) + " " + Math.max(a.length - d, 0) + " " + 10);
+            // pathRange.setAttribute("stroke-dashoffset", -b.progress * b.length);
+          }
+        }
+        var pathDragStart = new PathDrag("pathDragStart", dragButtonStart);
+        pathDragStart.on(update);
+        pathDragStart.active(true);
+        pathDragStart.connect(pathRange);
+        pathDragStart.setProgress(0.25);
+        var pathDragEnd = new PathDrag("pathDragEnd", dragButtonEnd);
+        pathDragEnd.on(update);
+        pathDragEnd.active(true);
+        pathDragEnd.connect(pathRange);
+        pathDragEnd.setProgress(0.75);
         window.onresize = function () {
           pathDrag01.setProgress(pathDrag01.progress);
           pathDrag02.setProgress(pathDrag02.progress);
           pathDrag03.setProgress(pathDrag03.progress);
+
+          pathDragStart.setProgress(pathDragStart.progress);
+          pathDragEnd.setProgress(pathDragEnd.progress);
         };
       })();
     </script>
