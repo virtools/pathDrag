@@ -20,7 +20,6 @@
         flex-wrap: wrap;
         min-width: 800px;
         background-image: linear-gradient(-0deg, rgb(0, 0, 0) 0%, rgb(22, 15, 18) 50%, rgb(34, 19, 47) 100%);
-        overflow: hidden;
       }
 
       .dragButton {
@@ -314,16 +313,15 @@
           enumerable: false, // 設定為不可列舉的屬性
         });
         function getOffset(el) {
-          /*var pos = [0, 0];
+          var pos = [0, 0];
           var m = el;
           while (m) {
-            pos[0] += m.offsetLeft || 0;
-            pos[1] += m.offsetTop || 0;
-            m = m.offsetParent || m.parentElement;
+            pos[0] += m.scrollLeft || 0;
+            pos[1] += m.scrollTop || 0;
+            m = m.parentElement;
           }
-          return pos;*/
           var rect = el.getBoundingClientRect();
-          return [rect.left, rect.top];
+          return [rect.left + pos[0], rect.top + pos[1]];
         }
 
         var PathDrag = function (id, el, bool, path, progress) {
