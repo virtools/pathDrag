@@ -119,8 +119,20 @@ class PathDrag extends Drag {
     this.connect(path);
     this.setProgress(0);
   }
-  setResizUpdate() {
+  getRelativePos() {
+    const relativePos = VectorE.sub(getElementPagePos(this.svg), getElementPagePos(this.element.parentElement));
+    const matrix = getSVGMatrix(this.path);
+    if (matrix) {
+      const newMatrix = Matrix2D.multiply(matrix, Matrix2D.identity());
+      VectorE.add(relativePos, [newMatrix[6], newMatrix[7]]);
+    }
+    return relativePos;
+  }
+  addResizUpdate() {
     window.addEventListener("resize", () => {
+      if (path) {
+        this.relativePos = this.getRelativePos();
+      }
       this.setProgress(this.progress, true);
     });
   }
@@ -129,15 +141,7 @@ class PathDrag extends Drag {
       this.progress = Math.min(Math.max(value, 0), 1);
       if (this.path) {
         const pos = posToArray(this.path.getPointAtLength(this.pathLength * this.progress));
-        const relativePos = VectorE.sub(getElementPagePos(this.svg), getElementPagePos(this.element.parentElement));
-
-        const matrix = getSVGMatrix(this.path);
-        if (matrix) {
-          const newPos = Matrix2D.multiply(matrix, Matrix2D.translation(...pos));
-          VectorE.set(pos, newPos[6], newPos[7]);
-        }
-
-        VectorE.add(pos, relativePos);
+        VectorE.add(pos, this.relativePos);
         setElementPos(this.element, ...pos);
         this.fire("progress", this);
       }
@@ -150,48 +154,36 @@ class PathDrag extends Drag {
       const item = ev.touches ? ev.touches[0] : ev;
       this.element.classList.add("active");
       VectorE.set(mousePos, item.pageX, item.pageY);
-      const dragButton01Position = getElementPos(this.element);
-      local = Vector.sub(mousePos, dragButton01Position);
+      const btnPos = getElementPos(this.element);
+      local = Vector.sub(mousePos, btnPos);
+      update();
     });
     this.on("move", (ev) => {
       const item = ev.touches ? ev.touches[0] : ev;
       VectorE.set(mousePos, item.pageX, item.pageY);
-      update();
     });
     this.on("end", (ev) => {
       this.element.classList.remove("active");
     });
     const update = () => {
       if (this.mousedown) {
+        requestAnimationFrame(update);
         if (this.path) {
-          //requestAnimationFrame(update);
-          const dragButton01Position = getElementPos(this.element);
+          const btnPos = getElementPos(this.element);
           const dragPos = Vector.sub(mousePos, local);
           const count = 5;
-          let rr = Math.min(Point.distance(dragButton01Position, dragPos) * 0.5, 10);
-
-          const relativePos = VectorE.sub(getElementPagePos(this.svg), getElementPagePos(this.element.parentElement));
-          const matrix = getSVGMatrix(this.path);
+          let rr = Math.min(Point.distance(btnPos, dragPos) * 0.5, 10);
 
           let length = this.pathLength * this.progress;
           let pos = posToArray(this.path.getPointAtLength(length));
-
-          if (matrix) {
-            const newPos = Matrix2D.multiply(matrix, Matrix2D.translation(...pos));
-            VectorE.set(pos, newPos[6], newPos[7]);
-          }
-          VectorE.add(pos, relativePos);
+          VectorE.add(pos, this.relativePos);
           let distance = Point.distance(pos, dragPos);
 
           for (let i = 0; i <= count; i++) {
             for (let j = 0; j < 2; j++) {
               const tempLength = length + (j ? -1 : 1) * rr;
               pos = posToArray(this.path.getPointAtLength(tempLength));
-              if (matrix) {
-                const newPos = Matrix2D.multiply(matrix, Matrix2D.translation(...pos));
-                VectorE.set(pos, newPos[6], newPos[7]);
-              }
-              VectorE.add(pos, relativePos);
+              VectorE.add(pos, this.relativePos);
               const tempDistance = Point.distance(pos, dragPos);
               if (tempDistance < distance) {
                 distance = tempDistance;
@@ -202,6 +194,7 @@ class PathDrag extends Drag {
           }
           this.setProgress(length / this.pathLength);
         } else {
+          console.log("aaa");
           const dragPos = Vector.sub(mousePos, local);
           setElementPos(this.element, ...dragPos);
         }
@@ -214,6 +207,9 @@ class PathDrag extends Drag {
       this.path = path;
       this.svg = getSVG(this.path);
       this.pathLength = this.path.getTotalLength();
+
+      this.relativePos = this.getRelativePos();
+
       this.setProgress(this.progress);
       this.fire("connect", this);
     }

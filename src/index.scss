@@ -32,6 +32,46 @@ body {
   background-position: left top;
   background-image: linear-gradient(-0deg, rgb(0, 0, 0) 0%, rgb(22, 15, 18) 50%, rgb(34, 19, 47) 100%);*/
 }
+
+.btn {
+  position: absolute;
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-radius: 30px;
+  line-height: 30px;
+  color: #fff;
+  text-shadow: 0px 0px 2px #000, 0px 0px 2px #000;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  background-color: rgba(0, 0, 0, 0.75);
+  //cursor: grab;
+  transform: translate(-50%, -50%);
+  transition: transform 0.5s;
+}
+
+.btn:hover,
+.btn.active {
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.pathBg {
+  fill: none;
+  //stroke: #ccc;
+  //stroke-width: 20px;
+  stroke-linecap: square;
+  stroke-linejoin: round;
+}
+.pathValue {
+  fill: none;
+  //stroke-width: 5px;
+  stroke-linecap: square;
+  stroke-linejoin: round;
+}
+.svg {
+  position: relative;
+}
 #section01 {
   .content {
     height: 100vh;
@@ -59,6 +99,36 @@ body {
       max-height: 100%;
       align-items: center;
     }
+
+    #btnBrightness,
+    #btnContrast {
+      width: 20px;
+      height: 20px;
+      border-radius: 20px;
+      line-height: 20px;
+      background-color: #bd4a4a;
+      border: none;
+      &::after {
+        content: none;
+      }
+    }
+    #pathBrightness,
+    #pathContrast {
+      fill: none;
+      stroke: rgb(105, 105, 105);
+      stroke-width: 4;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+    #pathBrightnessValue,
+    #pathContrastValue {
+      fill: none;
+      stroke: rgb(255, 255, 255);
+      stroke-width: 2;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      filter: drop-shadow(0px, 0px, 5px, rgb(255, 0, 0));
+    }
   }
 }
 #section02 {
@@ -69,160 +139,92 @@ body {
     align-items: center;
     flex-wrap: wrap;
     background-color: rgb(29, 25, 25);
+
+    #btnR::after,
+    #btnG::after,
+    #btnB::after,
+    #btnStart::after,
+    #btnEnd::after {
+      content: "";
+      position: absolute;
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 2px solid rgba(204, 204, 204, 0.75);
+      box-sizing: border-box;
+      left: 0px;
+      top: 0px;
+      border-radius: 100%;
+    }
+
+    #pathRValue {
+      stroke: rgb(206, 38, 38);
+    }
+    #pathGValue {
+      stroke: rgb(47, 168, 47);
+    }
+    #pathBValue {
+      stroke: rgb(37, 37, 172);
+    }
+    #pathR,
+    #pathG,
+    #pathB {
+      stroke: #ccc;
+      stroke-width: 10px;
+    }
+    #pathRValue,
+    #pathGValue,
+    #pathBValue {
+      stroke-width: 5px;
+      filter: url(#f1);
+    }
+
+    #btnR {
+      background-color: rgba(255, 0, 0, 0.75);
+    }
+    #btnG {
+      background-color: rgba(0, 255, 0, 0.75);
+    }
+    #btnB {
+      background-color: rgba(0, 0, 255, 0.75);
+    }
+    .box {
+      width: 160px;
+      height: 160px;
+      background-color: #000;
+      text-align: center;
+      line-height: 160px;
+      font-size: 20px;
+      margin: 30px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0px 0px 4px #000, 0px 0px 4px #000;
+      border-radius: 10px;
+    }
+
+    #pathRange {
+      stroke: #ccc;
+      stroke-width: 10px;
+      stroke-linecap: round;
+    }
+    #pathRangeValue {
+      stroke: #000;
+      stroke-width: 4px;
+      stroke-linecap: round;
+    }
+
+    #btnStart,
+    #btnEnd {
+      width: 25px;
+      height: 25px;
+      border-radius: 25px;
+      line-height: 25px;
+    }
+    #btnStart::after {
+      content: "S";
+    }
+    #btnEnd::after {
+      content: "E";
+    }
   }
-}
-
-.dragButton {
-  position: absolute;
-  display: block;
-  width: 30px;
-  height: 30px;
-  border-radius: 30px;
-  line-height: 30px;
-  transform: translate(-50%, -50%);
-  color: #fff;
-  text-shadow: 0px 0px 2px #000, 0px 0px 2px #000;
-  text-align: center;
-  font-size: 12px;
-  font-weight: bold;
-  background-color: rgba(0, 0, 0, 0.75);
-  cursor: grab;
-}
-
-.dragButton::after {
-  content: "";
-  position: absolute;
-  display: block;
-  width: 100%;
-  height: 100%;
-  border: 2px solid rgba(204, 204, 204, 0.75);
-  box-sizing: border-box;
-  left: 0px;
-  top: 0px;
-  border-radius: 100%;
-}
-.path_bg {
-  fill: none;
-  stroke: #ccc;
-  stroke-width: 20px;
-  stroke-linecap: square;
-  stroke-linejoin: round;
-}
-.path_value {
-  fill: none;
-  stroke-width: 5px;
-  stroke-linecap: square;
-  stroke-linejoin: round;
-}
-#path01_value {
-  stroke: url(#stroke);
-  stroke: rgb(206, 38, 38);
-  filter: url(#f1);
-}
-#path02_value {
-  stroke: url(#stroke);
-  stroke: rgb(47, 168, 47);
-  filter: url(#f1);
-}
-#path03_value {
-  stroke: url(#stroke);
-  stroke: rgb(37, 37, 172);
-  filter: url(#f1);
-}
-
-#dragButton01 {
-  background-color: rgba(255, 0, 0, 0.75);
-  //box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.75);
-}
-#dragButton02 {
-  background-color: rgba(0, 255, 0, 0.75);
-  //box-shadow: 0px 0px 10px rgba(0, 255, 0, 0.75);
-}
-#dragButton03 {
-  background-color: rgba(0, 0, 255, 0.75);
-  //box-shadow: 0px 0px 10px rgba(0, 0, 255, 0.75);
-}
-.box {
-  width: 160px;
-  height: 160px;
-  background-color: #000;
-  text-align: center;
-  line-height: 160px;
-  font-size: 20px;
-  margin: 30px;
-  font-weight: bold;
-  color: #fff;
-  text-shadow: 0px 0px 4px #000, 0px 0px 4px #000;
-  border-radius: 10px;
-}
-.svg {
-  position: relative;
-}
-#pathRange {
-  stroke-width: 10px;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-#pathRange_value {
-  stroke-width: 4px;
-  stroke: #000;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-#dragButtonStart,
-#dragButtonEnd {
-  width: 20px;
-  height: 20px;
-  border-radius: 20px;
-  line-height: 20px;
-  transition: width 0.5s, height 0.5s, border-radius 0.5s, line-height 0.5s;
-}
-#dragButtonStart:hover,
-#dragButtonEnd:hover,
-#dragButtonStart.active,
-#dragButtonEnd.active {
-  width: 30px;
-  height: 30px;
-  border-radius: 30px;
-  line-height: 30px;
-}
-#dragButtonStart::after,
-#dragButtonEnd::after {
-  /*border: 0;*/
-}
-#dragButtonStart::after {
-  content: "S";
-}
-#dragButtonEnd::after {
-  content: "E";
-}
-
-#path04,
-#path05 {
-  fill: none;
-  stroke: rgb(105, 105, 105);
-  stroke-width: 4;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-}
-#dragButton04,
-#dragButton05 {
-  width: 20px;
-  height: 20px;
-  border-radius: 20px;
-  line-height: 20px;
-  background-color: #bd4a4a;
-  border: none;
-  &::after {
-    content: none;
-  }
-}
-#path04_value,
-#path05_value {
-  fill: none;
-  stroke: rgb(255, 255, 255);
-  stroke-width: 2;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-  filter: drop-shadow(0px, 0px, 5px, rgb(255, 0, 0));
 }
