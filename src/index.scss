@@ -130,6 +130,34 @@ body {
       stroke-linecap: round;
       filter: drop-shadow(0px, 0px, 5px, rgb(255, 0, 0));
     }
+
+    #arrow01 {
+      position: absolute;
+      display: block;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0.8rem 1rem 0 1rem;
+      border-color: hsl(0, 0%, 20%) transparent transparent transparent;
+      left: 50%;
+      bottom: 40px;
+      transform: translate(-50%, -50%);
+      animation: section00_arrow01_a 1s infinite;
+    }
+    @keyframes section00_arrow01_a {
+      0% {
+        transform: translate(-50%, -50%);
+        filter: drop-shadow(0 0 5px hsla(0, 0%, 20%, 0.5));
+      }
+      50% {
+        transform: translate(-50%, -100%);
+        filter: drop-shadow(0 0 10px hsla(0, 0%, 20%, 0.5));
+      }
+      100% {
+        transform: translate(-50%, -50%);
+        filter: drop-shadow(0 0 5px hsla(0, 0%, 20%, 0.5));
+      }
+    }
   }
 }
 #section02 {
