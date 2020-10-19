@@ -85,7 +85,8 @@ body {
       display: block;
       img {
         width: 100%;
-        max-width: 600px;
+        max-width: 400px;
+        border-radius: 20px;
       }
     }
 
@@ -95,7 +96,7 @@ body {
       width: 100%;
       max-width: 400px;
       //background-color: #888;
-      min-height: 600px;
+      /*min-height: 600px;*/
       max-height: 100%;
       align-items: center;
     }
@@ -133,7 +134,7 @@ body {
 }
 #section02 {
   .content {
-    height: 60vh;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;

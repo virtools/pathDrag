@@ -48,6 +48,15 @@ class Matrix2D {
       b20 * a02 + b21 * a12 + b22 * a22,
     ];
   }
+  static transform(a, pos) {
+    const a00 = a[0 * 3 + 0];
+    const a01 = a[0 * 3 + 1];
+    const a10 = a[1 * 3 + 0];
+    const a11 = a[1 * 3 + 1];
+    const a20 = a[2 * 3 + 0];
+    const a21 = a[2 * 3 + 1];
+    return [pos[0] * a00 + pos[1] * a10 + a20, pos[0] * a01 + pos[1] * a11 + a21];
+  }
   static projection(width, height) {
     // Note: This matrix flips the Y axis so 0 is at the top.
     return [2 / width, 0, 0, 0, -2 / height, 0, -1, 1, 1];

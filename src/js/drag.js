@@ -78,17 +78,17 @@ class Drag extends Listener {
       }
     };
     const move = (ev) => {
-      //if (this.mousedown) {
-      this.fire("move", ev);
-      //}
-      ev.preventDefault();
+      if (this.mousedown) {
+        this.fire("move", ev);
+        ev.preventDefault();
+      }
     };
     const end = (ev) => {
-      //if (this.mousedown) {
-      this.mousedown = false;
-      this.fire("end", ev);
-      //}
-      ev.preventDefault();
+      if (this.mousedown) {
+        this.mousedown = false;
+        this.fire("end", ev);
+        ev.preventDefault();
+      }
     };
 
     if (isMobile()) {
@@ -120,17 +120,18 @@ class PathDrag extends Drag {
     this.setProgress(0);
   }
   getRelativePos() {
-    const relativePos = VectorE.sub(getElementPagePos(this.svg), getElementPagePos(this.element.parentElement));
-    const matrix = getSVGMatrix(this.path);
-    if (matrix) {
-      const newMatrix = Matrix2D.multiply(matrix, Matrix2D.identity());
-      VectorE.add(relativePos, [newMatrix[6], newMatrix[7]]);
+    if (this.svg) {
+      const relativePos = VectorE.sub(getElementPagePos(this.svg), getElementPagePos(this.element.parentElement));
+      const matrix = getSVGMatrix(this.path);
+      if (matrix) {
+        VectorE.add(relativePos, Matrix2D.transform(matrix, [0, 0]));
+      }
+      return relativePos;
     }
-    return relativePos;
   }
   addResizUpdate() {
     window.addEventListener("resize", () => {
-      if (path) {
+      if (this.path) {
         this.relativePos = this.getRelativePos();
       }
       this.setProgress(this.progress, true);
@@ -204,14 +205,16 @@ class PathDrag extends Drag {
   }
   connect(path) {
     if (path) {
-      this.path = path;
-      this.svg = getSVG(this.path);
-      this.pathLength = this.path.getTotalLength();
+      this.svg = getSVG(path);
+      if (this.svg) {
+        this.path = path;
+        this.pathLength = this.path.getTotalLength();
 
-      this.relativePos = this.getRelativePos();
+        this.relativePos = this.getRelativePos();
 
-      this.setProgress(this.progress);
-      this.fire("connect", this);
+        this.setProgress(this.progress);
+        this.fire("connect", this);
+      }
     }
   }
 }
